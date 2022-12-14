@@ -30,6 +30,10 @@ def extract_features(Images):
     return Kp, Desc
 
 
+def svm_model(kp,desc):
+    return 1
+
+
 # main function
 images = read_images()
 Key_points, Descriptors = extract_features(images)
