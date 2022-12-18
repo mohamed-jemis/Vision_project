@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 class BOV:
     def __init__(self, no_clusters):
         self.no_clusters = no_clusters
-        self.train_path = 'C:/Users/avata/Desktop/Vision project/data/'
+        self.train_path = 'C:/Users/avata/Desktop/Vision project/data'
         self.test_path = 'C:/Users/avata/Desktop/Vision project/data'
         self.im_helper = ImageHelpers()
         self.bov_helper = BOVHelpers(no_clusters)
@@ -33,7 +33,7 @@ class BOV:
         """
 
         # read file. prepare file lists.
-        self.images, self.trainImageCount = self.file_helper.getFiles(self.train_path)
+        self.images, self.trainImageCount = self.file_helper.getFiles(self.train_path, 1)
         # extract SIFT Features from each image
         label_count = 0 
         for word, imlist in self.images.items():
@@ -108,7 +108,7 @@ class BOV:
 
         """
         correctClassifications = 0
-        self.testImages, self.testImageCount = self.file_helper.getFiles(self.test_path)
+        self.testImages, self.testImageCount = self.file_helper.getFiles(self.test_path, 0)
 
         predictions = []
 
@@ -150,18 +150,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description=" Bag of visual words example"
         )
-    parser.add_argument('--train_path',default="images\\train", action="store", dest="train_path")
-    parser.add_argument('--test_path',default="images\\test", action="store", dest="test_path")
-    args = vars(parser.parse_args())
-    print(args)
+    # parser.add_argument('--train_path',default="images\\train", action="store", dest="train_path")
+    # parser.add_argument('--test_path',default="images\\test", action="store", dest="test_path")
+    # args = vars(parser.parse_args())
+    # print(args)
 
     
     bov = BOV(no_clusters=100)
 
     # set training paths
-    bov.train_path = args['train_path'] 
+    # bov.train_path = args['train_path']
     # set testing paths
-    bov.test_path = args['test_path'] 
+    # bov.test_path = args['test_path']
     # train the model
     bov.trainModel()
     # test model

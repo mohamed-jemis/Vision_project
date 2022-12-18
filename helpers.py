@@ -30,24 +30,20 @@ class BOVHelpers:
         self.clf = SVC()
 
     def cluster(self):
-        """
-		cluster using KMeans algorithm, 
-
-		"""
         self.kmeans_ret = self.kmeans_obj.fit_predict(self.descriptor_vstack)
 
     def developVocabulary(self, n_images, descriptor_list):
 
         """
-		Each cluster denotes a particular visual word 
-		Every image can be represeted as a combination of multiple 
-		visual words. The best method is to generate a sparse histogram
-		that contains the frequency of occurence of each visual word 
+    Each cluster denotes a particular visual word
+    Every image can be represeted as a combination of multiple
+    visual words. The best method is to generate a sparse histogram
+    that contains the frequency of occurence of each visual word
 
-		Thus the vocabulary comprises of a set of histograms of encompassing
-		all descriptions for all images
+    Thus the vocabulary comprises of a set of histograms of encompassing
+    all descriptions for all images
 
-		"""
+    """
 
         self.mega_histogram = np.array([np.zeros(self.n_clusters) for i in range(n_images)])
         old_count = 0
@@ -61,12 +57,11 @@ class BOVHelpers:
 
     def standardize(self, std=None):
         """
-		
-		standardize is required to normalize the distribution
-		wrt sample size and features. If not normalized, the classifier may become
-		biased due to steep variances.
+    standardize is required to normalize the distribution
+    wrt sample size and features. If not normalized, the classifier may become
+    biased due to steep variances.
 
-		"""
+    """
         if std is None:
             self.scale = StandardScaler().fit(self.mega_histogram)
             self.mega_histogram = self.scale.transform(self.mega_histogram)
@@ -76,10 +71,9 @@ class BOVHelpers:
 
     def formatND(self, l):
         """
-		restructures list into vstack array of shape
-		M samples x N features for sklearn
-
-		"""
+    restructures list into vstack array of shape
+    M samples x N features for sklearn
+    """
         vStack = np.array(l[0])
         for remaining in l[1:]:
             vStack = np.vstack((vStack, remaining))
@@ -88,10 +82,10 @@ class BOVHelpers:
 
     def train(self, train_labels):
         """
-		uses sklearn.svm.SVC classifier (SVM) 
+    uses sklearn.svm.SVC classifier (SVM)
 
 
-		"""
+    """
         print("Training SVM")
         print(self.clf)
         print("Train labels", train_labels)
@@ -125,23 +119,42 @@ class FileHelpers:
     def __init__(self):
         pass
 
-    def getFiles(self, path):
+    def getFiles(self, path, train):
         """
-		- returns  a dictionary of all files 
-		having key => value as  objectname => image path
+    - returns  a dictionary of all files
+    having key => value as  objectname => image path
 
-		- returns total number of files.
+    - returns total number of files.
+        path will contain the data
+        need to open each person
+        loop of listdir willl return persons
+        each person we want to join train if train is true
+        else join test
+        avoid the csv file
 
-		"""
+    """
+        print('yarab')
         imlist = {}
         count = 0
+        print(path)
         for each in os.listdir(path):
             print(" #### Reading image category ", each, " ##### ")
             imlist[each] = []
-            for imagefile in os.listdir(path + '/' + each):
-                print("Reading file ", imagefile)
-                im = cv2.imread(path + '/' + each + '/' + imagefile, 0)
-                imlist[each].append(im)
-                count += 1
-
+            if train == 1:
+                for imagefile in os.listdir(path + '/' + each+'/'+'Train'):
+                    if imagefile.__contains__('csv'):
+                        continue
+                    print("Reading file ", imagefile)
+                    im = cv2.imread(path + '/' + each + '/' + 'Train' + '/' + imagefile, 0)
+                    imlist[each].append(im)
+                    count += 1
+            elif train == 0:
+                for imagefile in os.listdir(path + '/' + each + '/' + 'Test'):
+                    if imagefile.__contains__('csv'):
+                        continue
+                    print("Reading file ", imagefile)
+                    im = cv2.imread(path + '/' + each + '/' + 'Test' + '/' + imagefile, 0)
+                    imlist[each].append(im)
+                    count += 1
+        print(imlist)
         return [imlist, count]
